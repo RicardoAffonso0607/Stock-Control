@@ -79,6 +79,57 @@ class Database():
             return produtos
         except Exception as e:
             return e
+        
+    def getUsuarioPorNome(self, nome: str) -> tuple:
+        """
+        Busca usuario por nome
+
+        Parametro:
+        - nome (str): nome a ser buscado
+
+        Retorna:
+        - tuple: Usuario
+        - str: Mensagem de erro
+        """
+        try:
+            if nome == None:
+                raise Exception("Nome invalido")
+            
+            self.cursor.execute(f"SELECT * FROM usuarios WHERE nome = {nome}")
+            usuario = self.cursor.fetchone()
+
+            if usuario == None:
+                raise Exception("Usuario nao encontrado")
+            return usuario
+        except Exception as e:
+            return e
+        
+    def verificarNomeESenha(self, login: str, senha: str) -> bool:
+        """
+        Verifica se nome e senha estao corretos
+
+        Parametro:
+        - login (str): login a ser buscado
+        - senha (str): senha a ser buscado
+
+        Retorna:
+        - bool: True se existe, False se nao existe
+        - str: Mensagem de erro
+        """
+        try:
+            if login == None or senha == None:
+                raise Exception("Parametros invalidos")
+            
+            self.cursor.execute(f"SELECT * FROM usuarios WHERE login = {login} AND senha = {senha}")
+            usuario = self.cursor.fetchone()
+
+            if usuario == None:
+                return False
+            
+            return True
+
+        except Exception as e:
+            return e
 
     def finalizarServidor(self):
         """

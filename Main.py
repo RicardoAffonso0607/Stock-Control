@@ -1,15 +1,29 @@
 from Database import *
+from ScreenManager import *
+import tkinter as tk
 
-def main() -> None:
-    db = Database()
-    print(db.getProdutos())
-    print("\n")
-    print(db.getProdutoPorID(2))
-    print("\n")
-    print(db.getProdutoPorNome('pera'))
-    print("\n")
-    db.finalizarServidor()
+class Main():
 
+    def __init__(self):
+        self.db = Database()
+        self.screenManager = ScreenManager(self.db)
+
+    def testeDB(self) -> None:
+        print(self.db.getProdutos())
+        print("\n")
+        print(self.db.getProdutoPorID(2))
+        print("\n")
+        print(self.db.getProdutoPorNome('pera'))
+        print("\n")
+
+    def main(self) -> None:
+        self.screenManager.mainloop()
+
+    def finalizar(self):
+        self.db.finalizarServidor()
 
 if __name__ == "__main__":
-    main()
+    main = Main()
+    main.main()
+    #main.testeDB()
+    main.finalizar()
