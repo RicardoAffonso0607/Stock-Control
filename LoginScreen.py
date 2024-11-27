@@ -14,7 +14,7 @@ class LoginScreen(tk.Frame):
         label_titulo = tk.Label(
             self, 
             text="Login", 
-            font=("Arial", 20, "bold"), 
+            font=("Arial", 24, "bold"), 
             bg="#f2f2f2", 
             fg="#333"
         )
@@ -67,6 +67,7 @@ class LoginScreen(tk.Frame):
             return
         else:
             messagebox.showinfo("Login", f"Bem-vindo, {login}!")
+            self.controller.show("ProductsScreen")
 
 
         

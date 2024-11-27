@@ -1,5 +1,6 @@
 import psycopg2
 import time
+from datetime import date
 
 class Database():
 
@@ -80,6 +81,18 @@ class Database():
         except Exception as e:
             return e
         
+    def atualizarProduto(self, valores_atualizados):
+        try:
+            if not valores_atualizados:
+                raise Exception("Parametros inválidos")
+            
+            self.cursor.execute(f"UPDATE produtos SET preco = '{valores_atualizados[2]}', quantidade = '{valores_atualizados[3]}', data_entrada = '{valores_atualizados[4]}', vendidos = '{valores_atualizados[5]}', data_validade = '{valores_atualizados[6]}'" +
+                                f"WHERE id = '{valores_atualizados[0]}'")
+            self.conn.commit()
+            return
+        except Exception as e:
+            return e
+        
     def getUsuarioPorNome(self, nome: str) -> tuple:
         """
         Busca usuario por nome
@@ -104,6 +117,44 @@ class Database():
         except Exception as e:
             return e
         
+    def createUsuario(self, nome, login, senha, nivel_acesso):
+        try:
+            if not nome or not login or not senha or not nivel_acesso:
+                raise Exception("Parametros inválidos")
+            
+            self.cursor.execute("INSERT INTO usuarios (create_time, nome, login, senha, nivel_acesso)" +
+                               f"VALUES ('{date.today()}','{nome}', '{login}', '{senha}', '{nivel_acesso}')")
+            self.conn.commit()
+            return
+        except Exception as e:
+            return e
+        
+    def existeUsuario(self, login: str) -> bool:
+        """
+        Verifica se usuario existe
+
+        Parametro:
+        - login (str): login a ser buscado
+
+        Retorna:
+        - bool: True se existe, False se nao existe
+        - str: Mensagem de erro
+        """
+        try:
+            if login == None:
+                raise Exception("Parametros invalidos")
+            
+            self.cursor.execute(f"SELECT * FROM usuarios WHERE login = '{login}'")
+            usuario = self.cursor.fetchone()
+
+            if usuario == None:
+                return False
+            
+            return True
+
+        except Exception as e:
+            return e
+        
     def verificarNomeESenha(self, login: str, senha: str) -> bool:
         """
         Verifica se nome e senha estao corretos
@@ -120,7 +171,7 @@ class Database():
             if login == None or senha == None:
                 raise Exception("Parametros invalidos")
             
-            self.cursor.execute(f"SELECT * FROM usuarios WHERE login = {login} AND senha = {senha}")
+            self.cursor.execute(f"SELECT * FROM usuarios WHERE login = '{login}' AND senha = '{senha}'")
             usuario = self.cursor.fetchone()
 
             if usuario == None:

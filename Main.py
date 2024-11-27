@@ -15,6 +15,8 @@ class Main():
         print("\n")
         print(self.db.getProdutoPorNome('pera'))
         print("\n")
+        #print(self.db.createUsuario("teste", "teste", "teste", 3))
+        #print(self.db.verificarNomeESenha("ricardo", "ricar"))
 
     def main(self) -> None:
         self.screenManager.mainloop()

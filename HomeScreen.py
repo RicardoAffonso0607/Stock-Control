@@ -13,7 +13,7 @@ class HomeScreen(tk.Frame):
         label_titulo = tk.Label(
             self, 
             text="Stock Control", 
-            font=("Arial", 24, "bold"), 
+            font=("Arial", 50, "bold"), 
             bg="#f2f2f2", 
             fg="#333"
         )
@@ -26,7 +26,8 @@ class HomeScreen(tk.Frame):
             font=("Arial", 14), 
             bg="#4CAF50", 
             fg="white", 
-            width=10, 
+            width=20, 
+            height=2,
             command=lambda:controller.show("LoginScreen")
         )
         botao_login.pack(side='top', anchor='center', pady=15)
@@ -38,7 +39,8 @@ class HomeScreen(tk.Frame):
             font=("Arial", 14), 
             bg="#f44336", 
             fg="white", 
-            width=10, 
+            width=20, 
+            height=2,
             command=lambda:controller.destroy()
         )
         botao_sair.pack(side='top', anchor='center', pady=15)

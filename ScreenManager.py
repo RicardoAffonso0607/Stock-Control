@@ -1,6 +1,8 @@
 import tkinter as tk
 from HomeScreen import HomeScreen
 from LoginScreen import LoginScreen
+from UserRegistrationScreen import UserRegsitrationScreen
+from ProductsScreen import ProductsScreen
 from Database import *
 
 class ScreenManager(tk.Tk):
@@ -9,10 +11,10 @@ class ScreenManager(tk.Tk):
         super().__init__()
         self.db = db
 
-        self.geometry("800x600")  
+        self.geometry("1900x1200")  
         self.title("Stock Control")  
         self.resizable(True, True)
-        self.minsize(width=300, height=300)
+        self.minsize(width=800, height=800)
         self.update_idletasks()
 
         self.container = tk.Frame(self)
@@ -24,6 +26,8 @@ class ScreenManager(tk.Tk):
         self.frames = {}
         self.add_frame("HomeScreen", HomeScreen)
         self.add_frame("LoginScreen", LoginScreen)
+        self.add_frame("UserRegsitrationScreen", UserRegsitrationScreen)
+        self.add_frame("ProductsScreen", ProductsScreen)
 
         self.show("HomeScreen")
 
