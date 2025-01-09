@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from Database import *
+from Config import *
 
 class LoginScreen(tk.Frame):
 
@@ -9,6 +10,7 @@ class LoginScreen(tk.Frame):
         self.parent = parent 
         self.controller = controller
         self.db = Database()
+        self.config = Config()
 
         # Rótulo do título
         label_titulo = tk.Label(
@@ -67,6 +69,7 @@ class LoginScreen(tk.Frame):
             return
         else:
             messagebox.showinfo("Login", f"Bem-vindo, {login}!")
+            self.config.setUsuarioAtual(login)
             self.controller.show("ProductsScreen")
 
 

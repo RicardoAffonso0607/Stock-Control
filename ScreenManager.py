@@ -1,7 +1,7 @@
 import tkinter as tk
 from HomeScreen import HomeScreen
 from LoginScreen import LoginScreen
-from UserRegistrationScreen import UserRegsitrationScreen
+from UserRegistrationScreen import UserRegistrationScreen
 from ProductsScreen import ProductsScreen
 from Database import *
 
@@ -21,15 +21,15 @@ class ScreenManager(tk.Tk):
         self.container.pack(fill="both", expand=True)
 
         self.frames = {}
-        self.telas = (HomeScreen, LoginScreen)
 
         self.frames = {}
         self.add_frame("HomeScreen", HomeScreen)
         self.add_frame("LoginScreen", LoginScreen)
-        self.add_frame("UserRegsitrationScreen", UserRegsitrationScreen)
+        self.add_frame("UserRegistrationScreen", UserRegistrationScreen)
         self.add_frame("ProductsScreen", ProductsScreen)
 
         self.show("HomeScreen")
+        #self.show("ProductsScreen")
 
     def add_frame(self, name, frame_class):
         """

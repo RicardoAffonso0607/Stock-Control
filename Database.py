@@ -93,22 +93,50 @@ class Database():
         except Exception as e:
             return e
         
-    def getUsuarioPorNome(self, nome: str) -> tuple:
+    def criarProduto(self, nome, preco, quantidade, vendidos, data_validade):
+        try:
+            if not nome or not preco or not quantidade or not vendidos or not data_validade:
+                raise Exception("Parametros invalidos")
+            produto = self.getProdutoPorNome(nome=nome)
+            if produto != []:
+                raise Exception("Produto ja existe")
+            self.cursor.execute("INSERT INTO produtos (nome, preco, quantidade, data_entrada, vendidos, data_validade)" +
+                                f"VALUES ('{nome}','{preco}', '{quantidade}', '{date.today()}', '{vendidos}', '{data_validade}') RETURNING id")
+            id = self.cursor.fetchone()[0]
+            self.conn.commit()
+            return id
+        except Exception as e:
+            return e
+        
+    def excluirProduto(self, id:int):
+        try:
+            if id < 1:
+                raise Exception("Parametros inválidos")
+            produto = self.getProdutoPorID(id=id)
+            if produto == None:
+                return
+            self.cursor.execute(f"DELETE FROM produtos WHERE id = {id}") 
+            self.conn.commit()
+            return
+        except Exception as e:
+            return e
+        
+    def getUsuarioPorLogin(self, login: str) -> tuple:
         """
-        Busca usuario por nome
+        Busca usuario por login
 
         Parametro:
-        - nome (str): nome a ser buscado
+        - login (str): nome a ser buscado
 
         Retorna:
         - tuple: Usuario
         - str: Mensagem de erro
         """
         try:
-            if nome == None:
-                raise Exception("Nome invalido")
+            if login == None:
+                raise Exception("Login invalido")
             
-            self.cursor.execute(f"SELECT * FROM usuarios WHERE nome = {nome}")
+            self.cursor.execute(f"SELECT * FROM usuarios WHERE login = '{login}'")
             usuario = self.cursor.fetchone()
 
             if usuario == None:

@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk
 from Database import *
 from datetime import datetime
+from Config import *
 
 class ProductsScreen(tk.Frame):
 
@@ -11,6 +12,7 @@ class ProductsScreen(tk.Frame):
         self.parent = parent 
         self.controller = controller
         self.db = Database()
+        self.config = Config()
 
         # Rótulo do título
         label_titulo = tk.Label(
@@ -59,7 +61,7 @@ class ProductsScreen(tk.Frame):
         self.popularTreeview()
 
         # Evento de clicar duas vezes sobre um item
-        self.product_table.bind("<Double-1>", self.exibirAltercoes)
+        self.product_table.bind("<Double-1>", self.exibirAlteracoes)
 
         # Botão para cadastrar novos usuarios
         botao_cadastrar_usuario = tk.Button(
@@ -69,9 +71,21 @@ class ProductsScreen(tk.Frame):
             bg="#f44336", 
             fg="white", 
             width=20, 
-            command=lambda:controller.show("UserRegsitrationScreen")
+            command=self.registrarUsuario
         )
-        botao_cadastrar_usuario.pack(pady=10)
+        botao_cadastrar_usuario.pack(padx=5)
+
+        # Botão para cadastrar novos produtos
+        botao_cadastrar_produto = tk.Button(
+            self, 
+            text="Cadastrar novo produto", 
+            font=("Arial", 14), 
+            bg="#f44336", 
+            fg="white", 
+            width=20, 
+            command=self.criarProduto
+        )
+        botao_cadastrar_produto.pack(padx=5)
 
         # Botão para voltar
         botao_voltar = tk.Button(
@@ -83,7 +97,7 @@ class ProductsScreen(tk.Frame):
             width=20, 
             command=lambda:controller.show("HomeScreen")
         )
-        botao_voltar.pack(pady=10)
+        botao_voltar.pack(padx=5)
 
     def popularTreeview(self):
         produtos = self.db.getProdutos()
@@ -91,10 +105,105 @@ class ProductsScreen(tk.Frame):
         for produto in produtos:
             self.product_table.insert("", tk.END, values=produto)
 
-    def exibirAltercoes(self, eventoAcionado):
+    def registrarUsuario(self):
+        usuario = self.db.getUsuarioPorLogin(self.config.getUsuarioAtual())  
+        if usuario[5] >= 3:
+            return
+        self.controller.show("UserRegistrationScreen")
+
+    def criarProduto(self):
+        usuario = self.db.getUsuarioPorLogin(self.config.getUsuarioAtual())  
+        if usuario[5] >= 3:
+            return
+
+        # Criar uma nova janela
+        new_product_window = tk.Toplevel(self)
+        new_product_window.title("Criar Produto")
+        new_product_window.geometry("500x600")
+        new_product_window.transient(self) 
+
+        # Campos de edição
+        tk.Label(new_product_window, text="Nome:").pack(pady=5)
+        name_entry = tk.Entry(new_product_window)
+        name_entry.pack(pady=5)
+
+        tk.Label(new_product_window, text="Preço:").pack(pady=5)
+        price_entry = tk.Entry(new_product_window)
+        price_entry.pack(pady=5)
+
+        tk.Label(new_product_window, text="Quantidade:").pack(pady=5)
+        quantity_entry = tk.Entry(new_product_window)
+        quantity_entry.pack(pady=5)
+
+        tk.Label(new_product_window, text="Vendidos:").pack(pady=5)
+        solds_entry = tk.Entry(new_product_window)
+        solds_entry.pack(pady=5)
+
+        tk.Label(new_product_window, text="Data de validade: formato (aaaa-mm-dd)").pack(pady=5)
+        validity_date_entry = tk.Entry(new_product_window)
+        validity_date_entry.pack(pady=5)
+
+        # Botão para salvar alterações
+        def salvarAlteracoes():
+            new_product_name = name_entry.get()
+            new_product_price = float(price_entry.get())
+            new_product_quantity = int(quantity_entry.get())
+            new_product_solds = int(solds_entry.get())
+            new_product_validity_date = validity_date_entry.get()
+
+            # Validar dados
+            if new_product_name == None or new_product_name == " ":
+                messagebox.showerror("Erro", "Nome inválido!")
+                return
+
+            if new_product_price < 0:
+                messagebox.showerror("Erro", "Preço inválido!")
+                return
+
+            if new_product_quantity < 0:
+                messagebox.showerror("Erro", "Quantidade inválida!")
+                return
+            
+            if new_product_solds < 0:
+                messagebox.showerror("Erro", "Quantidade de itens vendidos inválidos!")
+                return
+            
+            if not datetime.strptime(new_product_validity_date, "%Y-%m-%d"):
+                messagebox.showerror("Erro", "Data de validade inválida!")
+                return
+
+            new_product_id = self.db.criarProduto(
+                nome=new_product_name,
+                preco=new_product_price,
+                quantidade=new_product_quantity,
+                vendidos=new_product_solds,
+                data_validade=new_product_validity_date
+                )
+            new_product = self.db.getProdutoPorID(new_product_id)
+            if new_product != None:
+                messagebox.showinfo("Sucesso", "Produto criado com sucesso!")
+                self.product_table.insert("", tk.END, values=new_product)
+            else:
+                messagebox.showerror("Erro", "Falha ao criar produto")
+            new_product_window.destroy()
+
+        def voltar():
+            new_product_window.destroy()
+
+        save_button = tk.Button(new_product_window, text="Criar", bg="#4CAF50", fg="white", command=salvarAlteracoes)
+        save_button.pack(pady=10)
+
+        voltar_button = tk.Button(new_product_window, text="Voltar", bg="#f44336", fg="white", command=voltar)
+        voltar_button.pack(pady=10)
+
+    def exibirAlteracoes(self, eventoAcionado):
         selected_item = self.product_table.selection()
         if not selected_item:
             return  
+        
+        usuario = self.db.getUsuarioPorLogin(self.config.getUsuarioAtual())  
+        if usuario[5] >= 3:
+            return
         
         item = selected_item[0]
         values = self.product_table.item(item, "values")
@@ -185,8 +294,17 @@ class ProductsScreen(tk.Frame):
             messagebox.showinfo("Sucesso", "Produto atualizado com sucesso!")
             edit_window.destroy()
 
+        def excluirAlteracoes():
+            self.db.excluirProduto(int(values[0]))
+            self.product_table.delete(item)
+            messagebox.showinfo("Sucesso", "Produto excluido com sucesso!")
+            edit_window.destroy()
+
         save_button = tk.Button(edit_window, text="Salvar", bg="#4CAF50", fg="white", command=salvarAlteracoes)
         save_button.pack(pady=10)
+
+        exluir_button = tk.Button(edit_window, text="Excluir", bg="#f44336", fg="white", command=excluirAlteracoes)
+        exluir_button.pack(pady=10)
 
 
         

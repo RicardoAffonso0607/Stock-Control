@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from Database import *
 
-class UserRegsitrationScreen(tk.Frame):
+class UserRegistrationScreen(tk.Frame):
 
     def __init__(self, parent, controller) -> None:
         super().__init__(parent)

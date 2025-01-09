@@ -6,6 +6,8 @@ class HomeScreen(tk.Frame):
 
     def __init__(self, parent, controller) -> None:
         super().__init__(parent)
+        self.parent = parent
+        self.controller = controller
 
         self.configure(bg="#f2f2f2")
 
