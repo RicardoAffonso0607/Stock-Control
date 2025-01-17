@@ -1,9 +1,9 @@
 import tkinter as tk
-from HomeScreen import HomeScreen
-from LoginScreen import LoginScreen
-from UserRegistrationScreen import UserRegistrationScreen
-from ProductsScreen import ProductsScreen
-from Database import *
+from Screens.HomeScreen import HomeScreen
+from Screens.LoginScreen import LoginScreen
+from Screens.UserRegistrationScreen import UserRegistrationScreen
+from Screens.ProductsScreen import ProductsScreen
+from Database.Database import *
 
 class ScreenManager(tk.Tk):
 

@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-import ScreenManager
+import Screens.ScreenManager as ScreenManager
 
 class HomeScreen(tk.Frame):
 

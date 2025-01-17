@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from Database import *
+from Database.DadosUsuario import *
 
 class UserRegistrationScreen(tk.Frame):
 
@@ -8,7 +8,7 @@ class UserRegistrationScreen(tk.Frame):
         super().__init__(parent)
         self.parent = parent 
         self.controller = controller
-        self.db = Database()
+        self.dbUsuario = DadosUsuario()
         self.nivel_acesso = 0
 
         # Rótulo do título
@@ -76,17 +76,22 @@ class UserRegistrationScreen(tk.Frame):
         botao_voltar.pack(pady=10)
 
     def cadastrar(self):
-        nome = self.entry_nome.get()
-        login = self.entry_login.get()
-        senha = self.entry_senha.get()
-        if not login or not senha or not nome or self.nivel_acesso == 0: 
+        novo_usuario = Usuario(
+            id=None,
+            create_time=None,
+            nome=self.entry_nome.get(),
+            login=self.entry_login.get(),
+            senha=self.entry_senha.get(),
+            nivel_acesso=self.nivel_acesso
+        )
+        if not novo_usuario.getNome() or not novo_usuario.getLogin() or not novo_usuario.getSenha() or novo_usuario.getNivelAcesso() == 0: 
             messagebox.showwarning("Erro", "Preencha todos os campos!")
 
-        if self.db.existeUsuario(login) == True:
+        if self.dbUsuario.existeUsuario(novo_usuario.getLogin()) == True:
             messagebox.showerror("Erro", "Esse login ja esta cadastrado")
             return
         else:
-            self.db.createUsuario(nome, login, senha, self.nivel_acesso)
+            self.dbUsuario.createUsuario(novo_usuario)
             messagebox.showinfo("Usuario cadastrado!")
 
 

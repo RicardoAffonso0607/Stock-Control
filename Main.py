@@ -1,5 +1,6 @@
-from Database import *
-from ScreenManager import *
+from Database.Database import *
+from Database.DadosProduto import * 
+from Screens.ScreenManager import *
 import tkinter as tk
 
 class Main():
@@ -7,13 +8,19 @@ class Main():
     def __init__(self):
         self.db = Database()
         self.screenManager = ScreenManager(self.db)
+        self.dbProdutos = DadosProduto()
 
     def testeDB(self) -> None:
-        print(self.db.getProdutos())
+        produtos = self.dbProdutos.getProdutos()
+        for produto in produtos:
+            print(produto)
         print("\n")
-        print(self.db.getProdutoPorID(2))
+        produto = self.dbProdutos.getProdutoPorID(2)
+        print(produto)
         print("\n")
-        print(self.db.getProdutoPorNome('pera'))
+        produtos = self.dbProdutos.getProdutoPorNome('pera')
+        for produto in produtos:
+            print(produto)
         print("\n")
         #print(self.db.createUsuario("teste", "teste", "teste", 3))
         #print(self.db.verificarNomeESenha("ricardo", "ricar"))

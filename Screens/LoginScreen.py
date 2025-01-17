@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
-from Database import *
-from Config import *
+from Database.DadosUsuario import *
+from Config.Config import *
 
 class LoginScreen(tk.Frame):
 
@@ -9,7 +9,7 @@ class LoginScreen(tk.Frame):
         super().__init__(parent)
         self.parent = parent 
         self.controller = controller
-        self.db = Database()
+        self.dbUsuario = DadosUsuario()
         self.config = Config()
 
         # Rótulo do título
@@ -64,12 +64,12 @@ class LoginScreen(tk.Frame):
         if not login or not senha: 
             messagebox.showwarning("Erro", "Preencha todos os campos!")
 
-        if self.db.verificarNomeESenha(login, senha) == False:
+        if self.dbUsuario.verificarNomeESenha(login, senha) == False:
             messagebox.showerror("Erro", "Login e/ou senha incorretos")
             return
         else:
             messagebox.showinfo("Login", f"Bem-vindo, {login}!")
-            self.config.setUsuarioAtual(login)
+            self.config.setUsuarioAtual(self.dbUsuario.getUsuarioPorLogin(login))
             self.controller.show("ProductsScreen")
 
 
