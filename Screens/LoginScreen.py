@@ -2,13 +2,12 @@ import tkinter as tk
 from tkinter import messagebox
 from Database.DadosUsuario import *
 from Config.Config import *
+from Screens.Screen import *
 
-class LoginScreen(tk.Frame):
+class LoginScreen(Screen):
 
     def __init__(self, parent, controller) -> None:
-        super().__init__(parent)
-        self.parent = parent 
-        self.controller = controller
+        super().__init__(parent, controller)
         self.dbUsuario = DadosUsuario()
         self.config = Config()
 

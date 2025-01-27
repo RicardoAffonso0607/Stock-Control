@@ -7,7 +7,7 @@ class Main():
 
     def __init__(self):
         self.db = Database()
-        self.screenManager = ScreenManager(self.db)
+        self.screenManager = ScreenManager()
         self.dbProdutos = DadosProduto()
 
     def testeDB(self) -> None:

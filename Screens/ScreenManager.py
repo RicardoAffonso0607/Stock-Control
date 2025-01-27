@@ -3,13 +3,13 @@ from Screens.HomeScreen import HomeScreen
 from Screens.LoginScreen import LoginScreen
 from Screens.UserRegistrationScreen import UserRegistrationScreen
 from Screens.ProductsScreen import ProductsScreen
+from Screens.OrderScreen import OrderScreen
 from Database.Database import *
 
 class ScreenManager(tk.Tk):
 
-    def __init__(self, db: Database):
+    def __init__(self):
         super().__init__()
-        self.db = db
 
         self.geometry("1900x1200")  
         self.title("Stock Control")  
@@ -27,6 +27,7 @@ class ScreenManager(tk.Tk):
         self.add_frame("LoginScreen", LoginScreen)
         self.add_frame("UserRegistrationScreen", UserRegistrationScreen)
         self.add_frame("ProductsScreen", ProductsScreen)
+        self.add_frame("OrderScreen", OrderScreen)
 
         self.show("HomeScreen")
         #self.show("ProductsScreen")

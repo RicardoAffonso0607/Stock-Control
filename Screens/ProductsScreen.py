@@ -6,13 +6,12 @@ from Database.DadosUsuario import *
 from Models.Produto import *
 from datetime import datetime
 from Config.Config import *
+from Screens.Screen import *
 
-class ProductsScreen(tk.Frame):
+class ProductsScreen(Screen):
 
     def __init__(self, parent, controller) -> None:
-        super().__init__(parent)
-        self.parent = parent 
-        self.controller = controller
+        super().__init__(parent, controller)
         self.dbProduto = DadosProduto()
         self.dbUsuario = DadosUsuario()
         self.config = Config()
@@ -90,6 +89,18 @@ class ProductsScreen(tk.Frame):
         )
         botao_cadastrar_produto.pack(padx=5)
 
+        # Botão para criar um novo pedido
+        botao_criar_pedido = tk.Button(
+            self, 
+            text="Criar novo pedido", 
+            font=("Arial", 14), 
+            bg="#f44336", 
+            fg="white", 
+            width=20, 
+            command=self.criarPedido
+        )
+        botao_criar_pedido.pack(padx=5)
+
         # Botão para voltar
         botao_voltar = tk.Button(
             self, 
@@ -113,6 +124,9 @@ class ProductsScreen(tk.Frame):
         if usuario.getNivelAcesso() >= 3:
             return
         self.controller.show("UserRegistrationScreen")
+
+    def criarPedido(self):
+        self.controller.show("OrderScreen")
 
     def criarProduto(self):
         usuario = self.config.getUsuarioAtual()  

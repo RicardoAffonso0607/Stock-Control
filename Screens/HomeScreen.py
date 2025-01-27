@@ -1,13 +1,12 @@
 import tkinter as tk
 from tkinter import messagebox
 import Screens.ScreenManager as ScreenManager
+from Screens.Screen import *
 
-class HomeScreen(tk.Frame):
+class HomeScreen(Screen):
 
     def __init__(self, parent, controller) -> None:
-        super().__init__(parent)
-        self.parent = parent
-        self.controller = controller
+        super().__init__(parent, controller)
 
         self.configure(bg="#f2f2f2")
 

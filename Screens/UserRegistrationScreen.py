@@ -1,13 +1,12 @@
 import tkinter as tk
 from tkinter import messagebox
 from Database.DadosUsuario import *
+from Screens.Screen import *
 
-class UserRegistrationScreen(tk.Frame):
+class UserRegistrationScreen(Screen):
 
     def __init__(self, parent, controller) -> None:
-        super().__init__(parent)
-        self.parent = parent 
-        self.controller = controller
+        super().__init__(parent, controller)
         self.dbUsuario = DadosUsuario()
         self.nivel_acesso = 0
 
