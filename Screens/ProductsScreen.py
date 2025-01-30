@@ -208,7 +208,7 @@ class ProductsScreen(Screen):
         voltar_button = tk.Button(new_product_window, text="Voltar", bg="#f44336", fg="white", command=voltar)
         voltar_button.pack(pady=10)
 
-    def exibirAlteracoes(self, eventoAcionado):
+    def exibirAlteracoes(self, event):
         selected_item = self.product_table.selection()
         if not selected_item:
             return  
@@ -225,7 +225,7 @@ class ProductsScreen(Screen):
         edit_window = tk.Toplevel(self)
         edit_window.title("Editar Produto")
         edit_window.geometry("500x600")
-        edit_window.transient(self)  
+        edit_window.transient(self)
 
         # Nome do produto
         label_titulo = tk.Label(

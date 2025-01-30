@@ -2,7 +2,7 @@ from Models.Produto import *
 
 class Pedido:
 
-    def __init__(self, id = None, data_pedido = None, valor_total = None):
+    def __init__(self, id = None, data_pedido = None, valor_total = 0.0):
         self.id = id
         self.data_pedido = data_pedido
         self.valor_total = valor_total
@@ -20,6 +20,9 @@ class Pedido:
     
     def setValorTotal(self, valor_total):
         self.valor_total = valor_total
+
+    def addValorTotal(self, valor):
+        self.valor_total += valor
 
     def getValorTotal(self):
         return self.valor_total
@@ -39,5 +42,12 @@ class Pedido:
 
     def getProdutos(self):
         return self.produtos
+    
+    def atualizarProduto(self, produto:Produto):
+        for i in range(len(self.produtos)):
+            if self.produtos[i].getId() == produto.getId():
+                self.produtos[i] = produto
+                return
+        return None
     
 

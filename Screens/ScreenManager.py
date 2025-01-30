@@ -11,7 +11,7 @@ class ScreenManager(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.geometry("1900x1200")  
+        self.state('zoomed')
         self.title("Stock Control")  
         self.resizable(True, True)
         self.minsize(width=800, height=800)

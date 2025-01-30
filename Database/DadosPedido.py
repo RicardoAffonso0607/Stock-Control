@@ -36,7 +36,7 @@ class DadosPedido(Database):
         except Exception as e:
             return e
         
-    def atualizarProduto(self, pedido_atualizado:Pedido):
+    def atualizarPedido(self, pedido_atualizado:Pedido):
         try:
             if not pedido_atualizado:
                 raise Exception("Parametro inválido")
