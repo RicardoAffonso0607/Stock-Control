@@ -1,5 +1,6 @@
 import psycopg2
 import time
+from tkinter import messagebox
 from datetime import date
 from Database.Database import Database
 from Models.Pedido import Pedido
@@ -13,13 +14,13 @@ class DadosPedido(Database):
     def getPedidoPorId(self, id:int):
         try:
             if id == None:
-                raise Exception("Id invalido")
+                raise Exception("Falha ao procurar pedido por id - Favor informar um id")
             
             self.cursor.execute(f"SELECT * FROM pedidos WHERE id = '{id}'")
             pedido_encontrado = self.cursor.fetchone()
 
             if pedido_encontrado == None:
-                raise Exception("Pedido nao encontrado")
+                raise Exception("Pedido nao encontrado - Falha ao procurar pedido no banco de dados")
             
             self.cursor.execute(f"SELECT * FROM itens_pedido WHERE pedido_id = '{id}'")
             produtos_relacionados = self.cursor.fetchall()
@@ -34,27 +35,31 @@ class DadosPedido(Database):
             return pedido
             
         except Exception as e:
+            messagebox.showerror("Erro", e)
             return e
         
     def atualizarPedido(self, pedido_atualizado:Pedido):
         try:
             if not pedido_atualizado:
-                raise Exception("Parametro inválido")
+                raise Exception("Parametro inválido - Falha ao atualizar pedido")
             
             self.cursor.execute(f"UPDATE pedidos SET data_pedido = '{pedido_atualizado.getDataPedido()}', valor_total = '{pedido_atualizado.getValorTotal()}', observacoes = '{pedido_atualizado.getObservacoes()}'" +
                                 f"WHERE id = '{pedido_atualizado.getId()}'")
             self.conn.commit()
+
             return
+        
         except Exception as e:
+            messagebox.showerror("Erro", e)
             return e
 
     def criarPedido(self, novo_pedido:Pedido):
         try:
             if not novo_pedido:
-                raise Exception("Parametro invalido")
+                raise Exception("Parametro invalido - Falha ao criar pedido")
             
             if not novo_pedido.getProdutos():
-                raise Exception("Pedido sem produtos")
+                raise Exception("Pedido sem produtos - Favor adicionar produtos ao pedido")
             
             self.cursor.execute("INSERT INTO pedidos (data_pedido, valor_total, observacoes)" +
                                f"VALUES ('{novo_pedido.getDataPedido()}','{novo_pedido.getValorTotal()}', '{novo_pedido.getObservacoes()}') RETURNING id")
@@ -67,5 +72,7 @@ class DadosPedido(Database):
                 self.conn.commit()
 
             return id
+        
         except Exception as e:
+            messagebox.showerror("Erro", e)
             return e

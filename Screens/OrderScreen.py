@@ -13,6 +13,7 @@ class OrderScreen(Screen):
         self.dbProduto = DadosProduto()
         self.dbPedido = DadosPedido()
         self.pedido = Pedido()
+        self.quantidade_vendida = {}
 
         # Rótulo do título
         label_titulo = tk.Label(
@@ -57,6 +58,26 @@ class OrderScreen(Screen):
         # Evento de clicar duas vezes sobre um item
         self.product_table.bind("<Double-1>", self.EditarPedido)
 
+        # Rótulo do valor total
+        self.label_valor_total = tk.Label(
+            self, 
+            text="Valor Total: R$ 0.00", 
+            font=("Arial", 14), 
+            bg="#f2f2f2", 
+            fg="#333"
+        )
+        self.label_valor_total.pack(pady=10)
+
+
+
+
+
+
+
+
+
+        # Botão para finalizar o pedido
+
         # Botão para adicionar um produto
         botao_adicionar = tk.Button(
             self, 
@@ -76,7 +97,7 @@ class OrderScreen(Screen):
             font=("Arial", 14), 
             bg="#f44336", 
             fg="white", 
-            width=10, 
+            width=20, 
             command=lambda:controller.show("ProductsScreen")
         )
         botao_voltar.pack(pady=10)
@@ -122,23 +143,47 @@ class OrderScreen(Screen):
 
         # Botão para salvar alterações
         def salvarAlteracoes():
+
             product = self.dbProduto.getProdutoPorID(int(id_entry.get()))
 
-            quantidade_anterior = product.getVendidos()
+            quantidade_anterior = self.quantidade_vendida[product.getId()]
             quantidade_atual = int(quantity_entry.get())
+
             diferenca = quantidade_atual - quantidade_anterior
 
-            product.setVendidos(quantidade_atual)
-            self.dbProduto.atualizarProduto(product)
+            self.quantidade_vendida[product.getId()] = int(quantity_entry.get())
 
-            self.product_table.item(item, values=[product.getId(), product.getNome(), product.getPreco(), quantidade_atual, observations_entry.get()])
+            self.product_table.item(item, values=[product.getId(), product.getNome(), product.getPreco(), self.quantidade_vendida[product.getId()], observations_entry.get()])
             messagebox.showinfo("Sucesso", "Produto atualizado com sucesso!")
 
-            self.pedido.atualizarProduto(product)
             self.pedido.setDataPedido(datetime.now().strftime("%Y-%m-%d"))
             self.pedido.addValorTotal(product.getPreco() * diferenca)
             self.pedido.setObservacoes(observations_entry.get())
             self.dbPedido.atualizarPedido(self.pedido)
+
+            self.label_valor_total.config(text=f"Valor Total: R$ {self.pedido.getValorTotal():.2f}")
+
+            new_order_window.destroy()
+        
+        # Botão para excluir o produto
+        def excluirProduto():
+
+            product = self.dbProduto.getProdutoPorID(int(id_entry.get()))
+
+            self.pedido.setDataPedido(datetime.now().strftime("%Y-%m-%d"))
+
+            del self.quantidade_vendida[product.getId()]
+
+            self.pedido.addValorTotal(-product.getPreco() * int(quantity_entry.get()))
+            self.pedido.removeProduto(product)
+
+            self.dbPedido.atualizarPedido(self.pedido)
+
+            self.product_table.delete(item)
+
+            messagebox.showinfo("Sucesso", "Produto removido com sucesso!")
+
+            self.label_valor_total.config(text=f"Valor Total: R$ {self.pedido.getValorTotal():.2f}")
 
             new_order_window.destroy()
 
@@ -147,6 +192,9 @@ class OrderScreen(Screen):
 
         save_button = tk.Button(new_order_window, text="Salvar", bg="#4CAF50", fg="white", command=salvarAlteracoes)
         save_button.pack(pady=10)
+
+        delete_button = tk.Button(new_order_window, text="Excluir", bg="#f44336", fg="white", command=excluirProduto)
+        delete_button.pack(pady=10)
 
         voltar_button = tk.Button(new_order_window, text="Voltar", bg="#f44336", fg="white", command=voltar)
         voltar_button.pack(pady=10)
@@ -175,42 +223,49 @@ class OrderScreen(Screen):
 
         # Botão para salvar alterações
         def adicionarProduto():
-            product = self.dbProduto.getProdutoPorID(int(id_entry.get()))
 
-            if product == None:
-                messagebox.showerror("Erro", "Produto não encontrado!")
-                return
-            
+            product = self.dbProduto.getProdutoPorID(int(id_entry.get()))
             
             if int(quantity_entry.get()) > product.getQuantidade():
                 messagebox.showerror("Erro", "Quantidade insuficiente em estoque!")
                 return
 
-            product.setVendidos(int(quantity_entry.get()))
+            if product.getId() not in self.quantidade_vendida:
+                self.quantidade_vendida[product.getId()] = int(quantity_entry.get())
+            else:
+                self.quantidade_vendida[product.getId()] += int(quantity_entry.get())
+
             self.pedido.addProduto(product)
             self.pedido.setDataPedido(datetime.now().strftime("%Y-%m-%d"))
             self.pedido.addValorTotal(product.getPreco() * int(quantity_entry.get()))
             self.pedido.setObservacoes(observations_entry.get())
 
-
             # Atualizar a quantidade e o valor total se o produto já estiver na tabela 
             for item in self.product_table.get_children():
+
                 item_values = self.product_table.item(item, "values")
                 if int(item_values[0]) == product.getId():
-                    nova_quantidade = int(item_values[3]) + int(quantity_entry.get())
-                    self.product_table.item(item, values=[product.getId(), product.getNome(), product.getPreco(), nova_quantidade, observations_entry.get()])
+
+                    self.product_table.item(item, values=[product.getId(), product.getNome(), product.getPreco(), self.quantidade_vendida[product.getId()], observations_entry.get()])
                     messagebox.showinfo("Sucesso", "Quantidade do produto atualizada com sucesso!")
+
+                    self.label_valor_total.config(text=f"Valor Total: R$ {self.pedido.getValorTotal():.2f}")
+
                     new_order_window.destroy()
                     return
                 
             
             id = self.dbPedido.criarPedido(self.pedido)
             new_order = self.dbPedido.getPedidoPorId(id)
+
             if new_order != None:
                 messagebox.showinfo("Sucesso", "Pedido criado com sucesso!")
-                self.product_table.insert("", tk.END, values=[product.getId(), product.getNome(), product.getPreco(), int(quantity_entry.get()), observations_entry.get()])
+                self.product_table.insert("", tk.END, values=[product.getId(), product.getNome(), product.getPreco(), self.quantidade_vendida[product.getId()], observations_entry.get()])
             else:
                 messagebox.showerror("Erro", "Falha ao criar pedido")
+
+            self.label_valor_total.config(text=f"Valor Total: R$ {self.pedido.getValorTotal():.2f}")
+            
             new_order_window.destroy()
 
 

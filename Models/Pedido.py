@@ -37,6 +37,13 @@ class Pedido:
         if produto != None:
             self.produtos.append(produto)
 
+    def removeProduto(self, produto:Produto):
+        for i in range(len(self.produtos)):
+            if self.produtos[i].getId() == produto.getId():
+                self.produtos.pop(i)
+                return
+        return None
+
     def addListaProdutos(self, produtos:list):
         self.produtos = produtos
 

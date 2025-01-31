@@ -1,5 +1,6 @@
 import psycopg2
 import time
+from tkinter import messagebox
 from datetime import date
 from Database.Database import Database
 from Models.Usuario import Usuario
@@ -22,27 +23,33 @@ class DadosUsuario(Database):
         """
         try:
             if login == None:
-                raise Exception("Login invalido")
+                raise Exception("Login invalido - Favor informar um login")
             
             self.cursor.execute(f"SELECT * FROM usuarios WHERE login = '{login}'")
             usuario_encontrado = self.cursor.fetchone()
 
             if usuario_encontrado == None:
-                raise Exception("Usuario nao encontrado")
+                raise Exception("Usuario nao encontrado - Falha ao procurar usuario no banco de dados")
+            
             return Usuario(*usuario_encontrado)
+        
         except Exception as e:
+            messagebox.showerror("Erro", e)
             return e
         
     def createUsuario(self, novo_usuario:Usuario):
         try:
             if not novo_usuario:
-                raise Exception("Parametros inválidos")
+                raise Exception("Parametros inválidos - Falha ao criar usuario")
             
             self.cursor.execute("INSERT INTO usuarios (create_time, nome, login, senha, nivel_acesso)" +
                                f"VALUES ('{date.today()}','{novo_usuario.getNome()}', '{novo_usuario.getLogin()}', '{novo_usuario.getSenha()}', '{novo_usuario.getNivelAcesso()}')")
             self.conn.commit()
+
             return
+        
         except Exception as e:
+            messagebox.showerror("Erro", e)
             return e
         
     def existeUsuario(self, login: str) -> bool:
@@ -58,7 +65,7 @@ class DadosUsuario(Database):
         """
         try:
             if login == None:
-                raise Exception("Parametros invalidos")
+                raise Exception("Parametros invalidos - Favor informar um login")
             
             self.cursor.execute(f"SELECT * FROM usuarios WHERE login = '{login}'")
             usuario = self.cursor.fetchone()
@@ -69,6 +76,7 @@ class DadosUsuario(Database):
             return True
 
         except Exception as e:
+            messagebox.showerror("Erro", e)
             return e
         
     def verificarNomeESenha(self, login: str, senha: str) -> bool:
@@ -85,7 +93,7 @@ class DadosUsuario(Database):
         """
         try:
             if login == None or senha == None:
-                raise Exception("Parametros invalidos")
+                raise Exception("Parametros invalidos - Favor informar um login e/ou senha")
             
             self.cursor.execute(f"SELECT * FROM usuarios WHERE login = '{login}' AND senha = '{senha}'")
             usuario = self.cursor.fetchone()
@@ -96,4 +104,5 @@ class DadosUsuario(Database):
             return True
 
         except Exception as e:
+            messagebox.showerror("Erro", e)
             return e

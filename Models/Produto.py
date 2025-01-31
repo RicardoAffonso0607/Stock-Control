@@ -1,13 +1,14 @@
 class Produto:
 
-    def __init__(self, id = None, nome = None, preco = None, quantidade = None, data_entrada = None, vendidos = None, data_validade = None):
+    def __init__(self, id = None, nome = None, preco = None, quantidade = None, data_entrada = None, vendido = 0, data_validade = None, data_saida = None):
         self.id = id
         self.nome = nome
         self.preco = preco
         self.quantidade = quantidade
         self.data_entrada = data_entrada
-        self.vendidos = vendidos
+        self.vendidos = vendido
         self.data_validade = data_validade
+        self.data_saida = data_saida
 
     def __str__(self):
         return f"Produto: id = {self.id}, nome = {self.nome}, preco = {self.preco}"
@@ -42,8 +43,8 @@ class Produto:
     def getDataEntrada(self):
         return self.data_entrada
     
-    def setVendidos(self, vendidos):
-        self.vendidos = vendidos
+    def setVendidos(self, vendido):
+        self.vendidos = vendido
 
     def getVendidos(self):
         return self.vendidos
@@ -53,3 +54,9 @@ class Produto:
 
     def getDataValidade(self):
         return self.data_validade
+    
+    def setDataSaida(self, data_saida):
+        self.data_saida = data_saida
+
+    def getDataSaida(self):
+        return self.data_saida
