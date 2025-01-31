@@ -1,6 +1,3 @@
-import tkinter as tk
-from tkinter import messagebox
-import Screens.ScreenManager as ScreenManager
 from Screens.Screen import *
 
 class HomeScreen(Screen):

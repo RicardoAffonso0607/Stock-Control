@@ -1,8 +1,4 @@
 from Screens.Screen import *
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import ttk
-from datetime import datetime
 from Database.DadosPedido import *
 from Database.DadosProduto import *
 
@@ -15,6 +11,7 @@ class OrderScreen(Screen):
         self.pedido = Pedido()
         self.quantidade_vendida = {}
 
+
         # Rótulo do título
         label_titulo = tk.Label(
             self, 
@@ -24,6 +21,7 @@ class OrderScreen(Screen):
             fg="#333"
         )
         label_titulo.pack(pady=20)
+
 
         # Treeviwe com os produtos
         scrollbar = ttk.Scrollbar(
@@ -55,8 +53,36 @@ class OrderScreen(Screen):
         self.product_table.column("Quantidade", width=100, anchor="center")
         self.product_table.column("Observações", width=150, anchor="center")
 
+
         # Evento de clicar duas vezes sobre um item
         self.product_table.bind("<Double-1>", self.EditarPedido)
+
+
+        # Campo de observações do pedido
+        tk.Label(self, text="Observações do Pedido:", font=("Arial", 14), bg="#f2f2f2", fg="#333").pack(pady=10)
+        self.observations_entry = tk.Entry(self, font=("Arial", 14), width=50)
+        self.observations_entry.pack(pady=10)
+
+        def salvarObservacoes():
+            if self.pedido.getId() == None:
+                messagebox.showerror("Erro", "Pedido não criado!")
+            else:
+                self.pedido.setObservacoes(self.observations_entry.get())
+                self.dbPedido.atualizarPedido(self.pedido)
+                messagebox.showinfo("Sucesso", "Observação salva com sucesso!")
+
+        # Botão para salvar as observações
+        botao_salvar_observacoes = tk.Button(
+            self, 
+            text="Salvar Observações", 
+            font=("Arial", 7), 
+            bg="#4CAF50", 
+            fg="white", 
+            width=10, 
+            command=salvarObservacoes
+        )
+        botao_salvar_observacoes.pack(pady=10)
+
 
         # Rótulo do valor total
         self.label_valor_total = tk.Label(
@@ -68,15 +94,6 @@ class OrderScreen(Screen):
         )
         self.label_valor_total.pack(pady=10)
 
-
-
-
-
-
-
-
-
-        # Botão para finalizar o pedido
 
         # Botão para adicionar um produto
         botao_adicionar = tk.Button(
@@ -90,6 +107,20 @@ class OrderScreen(Screen):
         )
         botao_adicionar.pack(pady=10)
 
+
+        # Botão para finalizar o pedido
+        botao_finalizar = tk.Button(
+            self, 
+            text="Finalizar Pedido", 
+            font=("Arial", 14), 
+            bg="#4CAF50", 
+            fg="white", 
+            width=20, 
+            command=self.finalizarPedido
+        )
+        botao_finalizar.pack(pady=10)
+
+
         # Botão para voltar
         botao_voltar = tk.Button(
             self, 
@@ -101,6 +132,7 @@ class OrderScreen(Screen):
             command=lambda:controller.show("ProductsScreen")
         )
         botao_voltar.pack(pady=10)
+
 
     def EditarPedido(self, event):
         item = self.product_table.selection()[0]
@@ -201,7 +233,7 @@ class OrderScreen(Screen):
 
 
     def addProduct(self):
-        
+
         # Criar uma nova janela
         new_order_window = tk.Toplevel(self)
         new_order_window.title("Adicionar Produto")
@@ -222,7 +254,7 @@ class OrderScreen(Screen):
         observations_entry.pack(pady=5)
 
         # Botão para salvar alterações
-        def adicionarProduto():
+        def salvarPedidoProduto():
 
             product = self.dbProduto.getProdutoPorID(int(id_entry.get()))
             
@@ -254,26 +286,48 @@ class OrderScreen(Screen):
                     new_order_window.destroy()
                     return
                 
-            
+            # Adicionar o produto na tabela se ele não estiver lá
+            #if self.pedido.getId() == None:
             id = self.dbPedido.criarPedido(self.pedido)
-            new_order = self.dbPedido.getPedidoPorId(id)
+            self.pedido = self.dbPedido.getPedidoPorId(id)
 
-            if new_order != None:
-                messagebox.showinfo("Sucesso", "Pedido criado com sucesso!")
+            if self.pedido != None:
+                messagebox.showinfo("Sucesso", "Produto adicionado com sucesso!")
                 self.product_table.insert("", tk.END, values=[product.getId(), product.getNome(), product.getPreco(), self.quantidade_vendida[product.getId()], observations_entry.get()])
             else:
-                messagebox.showerror("Erro", "Falha ao criar pedido")
+                messagebox.showerror("Erro", "Falha ao adicionar produto ao pedido!")
 
             self.label_valor_total.config(text=f"Valor Total: R$ {self.pedido.getValorTotal():.2f}")
             
             new_order_window.destroy()
+        
 
-
-        def voltar():
-            new_order_window.destroy()
-
-        save_button = tk.Button(new_order_window, text="Adicionar", bg="#4CAF50", fg="white", command=adicionarProduto)
+        save_button = tk.Button(new_order_window, text="Adicionar", bg="#4CAF50", fg="white", command=salvarPedidoProduto)
         save_button.pack(pady=10)
 
-        voltar_button = tk.Button(new_order_window, text="Voltar", bg="#f44336", fg="white", command=voltar)
+        #messagebox.showinfo("Adicionar Produto", "Insira o ID do produto e a quantidade desejada")
+        
+        # Botão para voltar
+        voltar_button = tk.Button(new_order_window, text="Voltar", bg="#f44336", fg="white", command=new_order_window.destroy)
         voltar_button.pack(pady=10)
+
+
+    def finalizarPedido(self):
+        if self.pedido.getProdutos() == []:
+            messagebox.showerror("Erro", "Pedido sem produtos!")
+            return
+
+        produtos = self.pedido.getProdutos()
+        for produto in produtos:
+            produto.setQuantidade(produto.getQuantidade() - self.quantidade_vendida[produto.getId()])
+            produto.setVendidos(produto.getVendidos() + self.quantidade_vendida[produto.getId()])
+            self.dbProduto.atualizarProduto(produto)
+
+        self.pedido.setDataPedido(datetime.now().strftime("%Y-%m-%d"))
+        self.dbPedido.atualizarPedido(self.pedido)
+
+        messagebox.showinfo("Sucesso", "Pedido finalizado com sucesso!")
+
+        #self.controller.getScreen("ProductsScreen").exibirProdutos()
+        
+        self.controller.show("ProductsScreen")

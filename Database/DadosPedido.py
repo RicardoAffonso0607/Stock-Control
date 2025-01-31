@@ -1,7 +1,7 @@
-import psycopg2
-import time
+# import psycopg2
+# import time
 from tkinter import messagebox
-from datetime import date
+#from datetime import date
 from Database.Database import Database
 from Models.Pedido import Pedido
 from Models.Produto import Produto

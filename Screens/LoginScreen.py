@@ -1,8 +1,6 @@
-import tkinter as tk
-from tkinter import messagebox
+from Screens.Screen import *
 from Database.DadosUsuario import *
 from Config.Config import *
-from Screens.Screen import *
 
 class LoginScreen(Screen):
 

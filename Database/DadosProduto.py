@@ -1,9 +1,9 @@
-import psycopg2
-import time
+# import psycopg2
+# import time
+from Database.Database import Database
 from tkinter import messagebox
 from datetime import date
-from Database.Database import Database
-from Models.Produto import Produto
+from Models.Produto import *
 
 class DadosProduto(Database):
 

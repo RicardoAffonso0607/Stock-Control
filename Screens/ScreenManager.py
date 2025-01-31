@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from Screens.HomeScreen import HomeScreen
 from Screens.LoginScreen import LoginScreen
 from Screens.UserRegistrationScreen import UserRegistrationScreen
@@ -48,6 +49,16 @@ class ScreenManager(tk.Tk):
             raise KeyError(f"Tela {name} não registrada.")
         frame = self.frames[name]
         frame.tkraise()
+
+    def getScreen(self, name):
+        """
+        Retorna a tela especificada pelo nome
+        """
+        if name not in self.frames:
+            #raise KeyError(f"Tela {name} não registrada.")
+            messagebox.showerror("Erro", f"Tela {name} não registrada.")
+        
+        return self.frames[name]
 
     def finalizar(self):
         self.destroy()

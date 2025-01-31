@@ -1,7 +1,5 @@
-import tkinter as tk
-from tkinter import messagebox
-from Database.DadosUsuario import *
 from Screens.Screen import *
+from Database.DadosUsuario import *
 
 class UserRegistrationScreen(Screen):
 

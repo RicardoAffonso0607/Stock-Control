@@ -1,12 +1,7 @@
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import ttk
+from Screens.Screen import *
 from Database.DadosProduto import *
 from Database.DadosUsuario import *
-from Models.Produto import *
-from datetime import datetime
 from Config.Config import *
-from Screens.Screen import *
 
 class ProductsScreen(Screen):
 
@@ -60,10 +55,10 @@ class ProductsScreen(Screen):
         self.product_table.column("Data de validade", width=100, anchor="center")
 
         # Preenche a tabela
-        self.popularTreeview()
+        self.exibirProdutos()
 
         # Evento de clicar duas vezes sobre um item
-        self.product_table.bind("<Double-1>", self.exibirAlteracoes)
+        self.product_table.bind("<Double-1>", self.editarProduto)
 
         # Botão para cadastrar novos usuarios
         botao_cadastrar_usuario = tk.Button(
@@ -113,7 +108,7 @@ class ProductsScreen(Screen):
         )
         botao_voltar.pack(padx=5)
 
-    def popularTreeview(self):
+    def exibirProdutos(self):
         produtos = self.dbProduto.getProdutos()
         produtos.sort(key=lambda x: x.getId()) # Organiza por ID
         for produto in produtos:
@@ -208,7 +203,7 @@ class ProductsScreen(Screen):
         voltar_button = tk.Button(new_product_window, text="Voltar", bg="#f44336", fg="white", command=voltar)
         voltar_button.pack(pady=10)
 
-    def exibirAlteracoes(self, event):
+    def editarProduto(self, event):
         selected_item = self.product_table.selection()
         if not selected_item:
             return  
@@ -298,7 +293,7 @@ class ProductsScreen(Screen):
             messagebox.showinfo("Sucesso", "Produto atualizado com sucesso!")
             edit_window.destroy()
 
-        def excluirAlteracoes():
+        def excluirProduto():
             self.dbProduto.excluirProduto(int(produto_selecionado.getId()))
             self.product_table.delete(item)
             messagebox.showinfo("Sucesso", "Produto excluido com sucesso!")
@@ -307,7 +302,10 @@ class ProductsScreen(Screen):
         save_button = tk.Button(edit_window, text="Salvar", bg="#4CAF50", fg="white", command=salvarAlteracoes)
         save_button.pack(pady=10)
 
-        exluir_button = tk.Button(edit_window, text="Excluir", bg="#f44336", fg="white", command=excluirAlteracoes)
+        voltar_button = tk.Button(edit_window, text="Voltar", bg="#f44336", fg="white", command=edit_window.destroy)
+        voltar_button.pack(pady=10)
+
+        exluir_button = tk.Button(edit_window, text="Excluir", bg="#f44336", fg="white", command=excluirProduto)
         exluir_button.pack(pady=10)
 
 
