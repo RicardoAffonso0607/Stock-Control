@@ -65,7 +65,7 @@ class ProductsScreen(Screen):
             self, 
             text="Cadastrar novo usuario", 
             font=("Arial", 14), 
-            bg="#f44336", 
+            bg="#4CAF50", 
             fg="white", 
             width=20, 
             command=self.registrarUsuario
@@ -77,7 +77,7 @@ class ProductsScreen(Screen):
             self, 
             text="Cadastrar novo produto", 
             font=("Arial", 14), 
-            bg="#f44336", 
+            bg="#4CAF50", 
             fg="white", 
             width=20, 
             command=self.criarProduto
@@ -89,7 +89,7 @@ class ProductsScreen(Screen):
             self, 
             text="Criar novo pedido", 
             font=("Arial", 14), 
-            bg="#f44336", 
+            bg="#4CAF50", 
             fg="white", 
             width=20, 
             command=self.criarPedido

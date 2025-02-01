@@ -3,6 +3,7 @@
 from tkinter import messagebox
 #from datetime import date
 from Database.Database import Database
+from Database.DadosProduto import DadosProduto
 from Models.Pedido import Pedido
 from Models.Produto import Produto
 
@@ -10,6 +11,7 @@ class DadosPedido(Database):
 
     def __init__(self):
         super().__init__()
+        self.dadosProduto = DadosProduto()
 
     def getPedidoPorId(self, id:int):
         try:
@@ -43,6 +45,12 @@ class DadosPedido(Database):
             if not pedido_atualizado:
                 raise Exception("Parametro inválido - Falha ao atualizar pedido")
             
+            if not pedido_atualizado.getProdutos():
+                raise Exception("Pedido sem produtos - Favor adicionar produtos ao pedido")
+            
+            for produto in pedido_atualizado.getProdutos():
+                self.dadosProduto.atualizarProduto(produto)
+            
             self.cursor.execute(f"UPDATE pedidos SET data_pedido = '{pedido_atualizado.getDataPedido()}', valor_total = '{pedido_atualizado.getValorTotal()}', observacoes = '{pedido_atualizado.getObservacoes()}'" +
                                 f"WHERE id = '{pedido_atualizado.getId()}'")
             self.conn.commit()
@@ -67,8 +75,8 @@ class DadosPedido(Database):
             self.conn.commit()
 
             for produto in novo_pedido.getProdutos():
-                self.cursor.execute("INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, subtotal)" +
-                                   f"VALUES ('{id}', '{produto.getId()}', '{produto.getQuantidade()}', '{produto.getPreco()}','{produto.getQuantidade() * produto.getPreco()}')")
+                self.cursor.execute("INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario)" +
+                                   f"VALUES ('{id}', '{produto.getId()}', '{produto.getQuantidade()}', '{produto.getPreco()}')")
                 self.conn.commit()
 
             return id
