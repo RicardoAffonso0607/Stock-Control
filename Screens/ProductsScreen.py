@@ -114,6 +114,11 @@ class ProductsScreen(Screen):
         for produto in produtos:
             self.product_table.insert("", tk.END, values=produto.getAll())
 
+    def atualizarProdutos(self):
+        for item in self.product_table.get_children():
+            self.product_table.delete(item)
+        self.exibirProdutos()
+
     def registrarUsuario(self):
         usuario = self.config.getUsuarioAtual()  
         if usuario.getNivelAcesso() >= 3:

@@ -7,11 +7,11 @@ class Database():
     def __init__(self):
         self.conn = psycopg2.connect(
             host="localhost",        
-        #    database="projeto_aps",
-            database="stockcontrol",  
+            database="projeto_aps",
+        #    database="stockcontrol",  
             user="ricardo",     
-        #    password="senha" 
-            password="ricardo" 
+            password="senha" 
+        #    password="ricardo" 
         )
         self.cursor = self.conn.cursor()
         time.sleep(2)

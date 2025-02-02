@@ -54,7 +54,6 @@ class OrderScreen(Screen):
         # Evento de clicar duas vezes sobre um item
         self.product_table.bind("<Double-1>", self.EditarPedido)
 
-
         # Campo de observações do pedido
         tk.Label(self, text="Observações do Pedido:", font=("Arial", 14), bg="#f2f2f2", fg="#333").pack(pady=10)
         self.observations_entry = tk.Entry(self, font=("Arial", 14), width=50)
@@ -291,8 +290,13 @@ class OrderScreen(Screen):
         self.pedido.setObservacoes(self.observations_entry.get())
         self.dbPedido.criarPedido(self.pedido)
 
+        self.pedido = Pedido()
+        self.quantidade_vendida = {}
+        self.product_table.delete(*self.product_table.get_children())
+        self.label_valor_total.config(text=f"Valor Total: R$ {self.pedido.getValorTotal():.2f}")
+
         messagebox.showinfo("Sucesso", "Pedido finalizado com sucesso!")
 
-        #self.controller.getScreen("ProductsScreen").exibirProdutos()
+        self.controller.getScreen("ProductsScreen").atualizarProdutos()
         
         self.controller.show("ProductsScreen")
