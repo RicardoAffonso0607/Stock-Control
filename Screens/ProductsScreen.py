@@ -2,6 +2,7 @@ from Screens.Screen import *
 from Database.DadosProduto import *
 from Database.DadosUsuario import *
 from Config.Config import *
+import csv
 
 class ProductsScreen(Screen):
 
@@ -96,6 +97,18 @@ class ProductsScreen(Screen):
         )
         botao_criar_pedido.pack(padx=5)
 
+        # Botão para exportar para CSV
+        botao_exportar_csv = tk.Button(
+            self, 
+            text="Exportar para CSV", 
+            font=("Arial", 14), 
+            bg="#4CAF50", 
+            fg="white", 
+            width=20, 
+            command=self.exportarParaCSV
+        )
+        botao_exportar_csv.pack(padx=5)
+
         # Botão para voltar
         botao_voltar = tk.Button(
             self, 
@@ -113,6 +126,8 @@ class ProductsScreen(Screen):
         produtos.sort(key=lambda x: x.getId()) # Organiza por ID
         for produto in produtos:
             self.product_table.insert("", tk.END, values=produto.getAll())
+            if produto.getQuantidade() <= 0:
+                messagebox.showwarning("Sem estoque", "O produto" + produto.getNome() + "está sem estoque")
 
     def atualizarProdutos(self):
         for item in self.product_table.get_children():
@@ -127,6 +142,16 @@ class ProductsScreen(Screen):
 
     def criarPedido(self):
         self.controller.show("OrderScreen")
+
+    def exportarParaCSV(self):
+        with open("products.csv", "w", newline='') as myfile:
+            csvwriter = csv.writer(myfile, delimiter=',')
+        
+            for id in self.product_table.get_children():
+                row = self.product_table.item(id)["values"]
+                csvwriter.writerow(row)
+
+        messagebox.showinfo("Sucesso", "Arquivo exportado com sucesso!")
 
     def criarProduto(self):
         usuario = self.config.getUsuarioAtual()  
