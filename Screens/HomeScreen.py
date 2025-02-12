@@ -5,40 +5,52 @@ class HomeScreen(Screen):
     def __init__(self, parent, controller) -> None:
         super().__init__(parent, controller)
 
-        self.configure(bg="#f2f2f2")
+        # Tema
+        self.style = ttk.Style(theme="cosmo")  
 
-        # Rótulo do título
-        label_titulo = tk.Label(
-            self, 
-            text="Stock Control", 
-            font=("Arial", 50, "bold"), 
-            bg="#f2f2f2", 
-            fg="#333"
+        # Fundo
+        self.configure(bg=self.style.colors.get("secondary"))
+
+        # Centralização
+        content_frame = ttk.Frame(self)
+        content_frame.pack(expand=True, fill="both", padx=20, pady=20)
+
+        # Ícone (caixa)
+        label_icone = ttk.Label(
+            content_frame,
+            text="📦",  
+            font=("Arial", 100),  
+            bootstyle="primary"
         )
-        label_titulo.pack(side='top', anchor='center', pady=50)
+        label_icone.pack(side="top", anchor="center", pady=(0, 20))
+
+        # Rótulo título
+        label_titulo = ttk.Label(
+            content_frame, 
+            text="Stock Control", 
+            font=("Helvetica", 50, "bold"),  
+            bootstyle="dark"  
+        )
+        label_titulo.pack(side="top", anchor="center", pady=(0, 40))
 
         # Botão de Login
-        botao_login = tk.Button(
-            self, 
+        botao_login = ttk.Button(
+            content_frame, 
             text="Login", 
-            font=("Arial", 14), 
-            bg="#4CAF50", 
-            fg="white", 
-            width=20, 
-            height=2,
-            command=lambda:controller.show("LoginScreen")
+            bootstyle="success", 
+            width=25,  
+            padding=10,  
+            command=lambda: controller.show("LoginScreen")
         )
-        botao_login.pack(side='top', anchor='center', pady=15)
+        botao_login.pack(side="top", anchor="center", pady=15)
 
         # Botão de Sair
-        botao_sair = tk.Button(
-            self, 
+        botao_sair = ttk.Button(
+            content_frame, 
             text="Sair", 
-            font=("Arial", 14), 
-            bg="#f44336", 
-            fg="white", 
-            width=20, 
-            height=2,
-            command=lambda:controller.destroy()
+            bootstyle="danger", 
+            width=25,  
+            padding=10,  
+            command=lambda: controller.destroy()
         )
-        botao_sair.pack(side='top', anchor='center', pady=15)
+        botao_sair.pack(side="top", anchor="center", pady=15)
