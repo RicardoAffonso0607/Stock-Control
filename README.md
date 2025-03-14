@@ -4,6 +4,10 @@
 
 A Python-based Stock Control system with different user levels, product management, order handling, user registration, and login functionality. The system connects to a PostgreSQL database for persistent data storage.
 
+## Documentation
+
+All the documentation is inside the 'Trabalho APS.pdf' file. It contains all the use cases, graphs, and requirements used for the whole software architecture.
+
 ## Authors
 - [Ricardo Affonso](https://github.com/RicardoAffonso0607)
 - [Felipe Costa](https://github.com/FelipecSanto)
